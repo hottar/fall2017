@@ -1,5 +1,5 @@
 /*
- * 5 point stencil 
+ * 5 point stencil
  *
  *  Created on: Sep 12, 2010
  *      Author: Wim Bohm
@@ -63,22 +63,19 @@ int main(int argc, char **argv) {
    // Computation
    t = 0;
 
-
-   while ( t < MAX_ITERATION) {
-
+   for(; t < MAX_ITERATION; t++) {
+#pragma omp parallel for private(i), shared(cur) {
       // Computation
       for ( i=2 ; i < N-2 ; i++ ) {
             cur[i] = (prev[i-2]+prev[i-1]+prev[i]+prev[i+1]+prev[i+2])/5;
        }
-
+}
       {
       temp = prev;
       prev = cur;
       cur  = temp;
-      t++;
       }
    }
-
    stop_timer();
    time = elapsed_time();
 
@@ -96,7 +93,6 @@ void printResult(double *data, int size) {
      printf("data[%d]: %lf \n",size/10, data[size/10]);
      printf("data[%d]: %lf \n",size/5, data[size/5]);
      printf("data[%d]: %lf \n",size/2, data[size/2]);
-  
+
    return;
 }
-
