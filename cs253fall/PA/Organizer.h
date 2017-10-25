@@ -5,20 +5,27 @@
 #include "KeyGen.h"
 #include "Storage.h"
 #include "Filter.h"
-
-#define PERIOD R"(([^\w\d\'\s]|_)*(\.|\!|\?)+([^\w\d\'\s]|_)*)"
+#include "ExceptionLibrary.h"
+#include "TFIDF.h"
 
 class Organizer {
 public:
   Organizer() {}
   ~Organizer() {}
-  string work(const string& fname);
-  inline bool validPeriod(const string& source) { return regex_match(source, regex(PERIOD)); }
+  
+  void readEx(const string& ex_fname);
+  void readDoc(const string& fname);
+  void store(const string& source);
+  void unambiguous();
+  string work(int argc, const char** argv);
+  
 private:
   KeyGen gen;
   Reader r;
   Filter f;
   Storage storage;
+  ExceptionLibrary exLib;
+  TFIDF tfidf;
 };
 
 #endif
