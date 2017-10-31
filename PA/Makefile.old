@@ -1,0 +1,81 @@
+GCC = g++ -std=c++11 -Wall
+CFLAG = g++ -std=c++11 -Wall -c
+INC = -I.
+DEBUG = -g
+EXEC = PA6
+H = ExceptionKey.h ExceptionLibrary.h Filter.h Key.h KeyGen.h Organizer.h Reader.h Storage.h SuFFix.h IDF.h TFIDF.h 
+#Ambiguous.h
+CPP = Filter.cpp main.cpp Organizer.cpp SuFFix.cpp IDF.cpp TFIDF.cpp 
+#Ambiguous.cpp
+HONLY = ExceptionKey.h ExceptionLibrary.h Key.h KeyGen.h Reader.h Storage.h
+OTHER = Filter.o Organizer.o SuFFix.o IDF.o TFIDF.o 
+#Ambigous.o
+OBJ = main.cpp $(HONLY) $(OTHER)
+TPATH = /s/bach/c/under/hottar/cs253/test-cases/PA5_TestCase
+T6PATH = /s/bach/c/under/hottar/cs253/test-cases
+COMPATH = /s/bach/c/under/hottar/cs253/to-compare
+all: $(OBJ)
+	$(GCC) $(OBJ) -o $(EXEC) $(DEBUG) $(INC)
+
+clean:
+	-rm *.o $(EXEC) *.tar *.gch
+	
+Ambiguous.o: Ambiguous.cpp Ambiguous.h
+	$(CFLAG) $^
+
+Organizer.o: Organizer.cpp Organizer.h Reader.h KeyGen.h Storage.h Filter.h ExceptionLibrary.h TFIDF.h
+	$(CFLAG) $^
+
+Filter.o: Filter.h Filter.cpp
+	$(CFLAG) $^
+
+Key.o: Key.h
+	$(CFLAG) $^
+
+IDF.o: IDF.cpp IDF.h Storage.h
+	$(CFLAG) $^
+
+SuFFix.o: SuFFix.h SuFFix.cpp
+	$(CFLAG) $^
+
+KeyGen.o: KeyGen.h Key.h SuFFix.h
+	$(CFLAG) $^
+
+Storage.o: Storage.h Key.h
+	$(CFLAG) $^
+
+Reader.o: Reader.h
+	$(CFLAG) $^
+
+ExceptionKey.o: ExceptionKey.h Key.h
+	$(CFLAG) $^
+
+ExceptionLibrary.o: ExceptionLibrary.h ExceptionKey.h
+	$(CFLAG) $^
+
+TFIDF.o: TFIDF.cpp TFIDF.h IDF.h
+	$(CFLAG) $^
+
+test:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(TPATH)/valid_in
+
+compare:
+	diff -c $(COMPATH)/user_out.txt $(TPATH)/valid_out
+	
+comparecap: 
+	diff -c $(COMPATH)/user4_out.txt $(T6PATH)/valid4_out.txt
+
+tar:
+	tar -cvf $(EXEC).tar $(H) $(CPP) Makefile
+
+test1:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/bou.txt $(T6PATH)/pub.txt $(T6PATH)/gjt.txt
+
+test2:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/valid4.txt
+
+test3:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/one.txt $(T6PATH)/two.txt $(T6PATH)/three.txt
+
+test4:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/test1 $(T6PATH)/test2 $(T6PATH)/test3

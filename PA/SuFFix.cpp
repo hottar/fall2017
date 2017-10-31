@@ -56,7 +56,7 @@ bool SuFFix::isVowel(const string& source) const {
     char last = source.back();
     if(last == 'a' || last == 'i' || last == 'u' || last == 'e' || last == 'o')
       return true;
-    else if(last == 'y' && source.front() != 'y' && isVowel(string(source.begin(), source.end()-1) ) )
+    else if(last == 'y' && source.front()!='y' && !isVowel(preceder(source, "y")) )
       return true;
   }
 
@@ -127,7 +127,15 @@ void SuFFix::step2(string& source) {
 
 void SuFFix::step3(string& source) {
     string r1(region1(source)), suffix("");
-    if(tryReplaceWith(r1, "eedly", "ee") || tryReplaceWith(r1, "eed", "ee") );
+    
+    if(endsWith(source, "eedly")) {
+        if( endsWith(r1, "eedly") ) replaceWith(source, "eedly", "ee");
+        else return;
+    }
+    else if(endsWith(source, "eed")) {
+        if( endsWith(r1, "eed") ) replaceWith(source, "eed", "ee");
+        else return;
+    }
     else if(endsWith(source, "ingly") && hasVowel(preceder(source, "ingly")) ) suffix = "ingly";
     else if(endsWith(source, "edly") && hasVowel(preceder(source, "edly")) ) suffix = "edly";
     else if(endsWith(source, "ing") && hasVowel(preceder(source, "ing")) ) suffix = "ing";
@@ -137,7 +145,7 @@ void SuFFix::step3(string& source) {
       string prec(preceder(source, suffix));
       if(endsWith(prec, "at") || endsWith(prec, "bl") || endsWith(prec, "iz")) replaceWith(source, suffix, "e");
       else if(isDouble(prec)) replaceWith(source, "_"+suffix, "");
-      else if(isShort(prec)) replaceWith(source, suffix, "a");
+      else if(isShort(prec)) replaceWith(source, suffix, "e");
       else replaceWith(source, suffix, "");
     }
 }
@@ -150,13 +158,13 @@ void SuFFix::step5(string& source) {
   if(tryReplaceWith(source, "abli", "able"));
   else if(tryReplaceWith(source, "alism", "al") || tryReplaceWith(source, "aliti", "al") || tryReplaceWith(source, "alli", "al"));
   else if(tryReplaceWith(source, "anci", "ance"));
+  else if(tryReplaceWith(source, "ization", "ize") || tryReplaceWith(source, "izer", "ize") );
   else if(tryReplaceWith(source, "ation", "ate") || tryReplaceWith(source, "ational", "ate") || tryReplaceWith(source, "ator", "ate"));
   else if(tryReplaceWith(source, "biliti", "ble") || tryReplaceWith(source, "bli", "ble"));
   else if(tryReplaceWith(source, "enci", "ence"));
   else if(tryReplaceWith(source, "entli", "ent"));
   else if(tryReplaceWith(source, "fulli", "ful") || tryReplaceWith(source, "fulness", "ful") );
   else if(tryReplaceWith(source, "iveness", "ive") || tryReplaceWith(source, "iviti", "ive") );
-  else if(tryReplaceWith(source, "ization", "ize") || tryReplaceWith(source, "izer", "ize") );
   else if(tryReplaceWith(source, "lessli", "less"));
   else if(endsWith(source, "li") && isLiEnd(preceder(source, "li")) ) replaceWith(source, "li", "");
   else if(endsWith(source, "ogi") && endsWith(preceder(source, "ogi"), "l") ) replaceWith(source, "ogi", "og");
@@ -167,34 +175,58 @@ void SuFFix::step5(string& source) {
 void SuFFix::step6(string& source) {
   string r1(region1(source));
   if(!r1.empty()){
-    if(endsWith(r1, "alize") )      replaceWith(source, "alize", "al");
-    else if(endsWith(r1, "ational") )      replaceWith(source, "ational", "ate");
-    else if(endsWith(r1, "icate") || endsWith(r1, "iciti") || endsWith(r1, "ical")) {
-      if(tryReplaceWith(source, "icate", "ic") || tryReplaceWith(source, "iciti", "ic") || tryReplaceWith(source, "ical", "ic"));
-    }
-    else if(endsWith(r1, "ful") || endsWith(r1, "ness") ) {
-      if(tryReplaceWith(source, "ful", "") || tryReplaceWith(source, "ness", "") );
-    }
-    else if(endsWith(r1, "tional") )
-      replaceWith(source, "tional", "tion");
-    else if(endsWith(region2(source), "ative") )
-      replaceWith(source, "ative", "");
+      if( endsWith(source, "ational") ) {
+          if(endsWith(r1, "ational")) replaceWith(source, "ational", "ate");
+          else return;
+      } else if( endsWith(source, "tional") ) {
+          if(endsWith(r1, "tional")) replaceWith(source, "tional", "tion");
+          else return;
+      } else if( endsWith(source, "alize") ) {
+          if(endsWith(r1, "alize")) replaceWith(source, "alize", "al");
+          else return;
+      } else if( endsWith(source, "icate") || endsWith(source, "iciti") ) {
+          if( endsWith(r1, "icate") || endsWith(r1, "iciti") ) replaceWith(source, "icate", "ic");              
+          else return;
+      } else if( endsWith(source, "ical") ) {
+          if(endsWith(r1, "ical")) replaceWith(source, "ical", "ic");
+          else return;
+      } else if( endsWith(source, "ness") ) {
+          if(endsWith(r1, "ness") ) replaceWith(source, "ness", "");
+          else return;
+      } else if( endsWith(source, "ful") ) {
+          if(endsWith(r1, "ful")) replaceWith(source, "ful", "");
+          else return;
+      } else if( endsWith(source, "ative") ) {
+          if(endsWith(region2(source), "ative")) replaceWith(source, "ative", "");
+          else return;
+      } 
   }
 }
 
 void SuFFix::step7(string& source) {
   string r2(region2(source));
   if(!r2.empty()){
-    if(endsWith(r2, "ement"))
-      replaceWith(source, "ement", "");// 5 letters
-    else if( endsWith(r2, "able") || endsWith(r2, "ance") || endsWith(r2, "ence") || endsWith(r2, "ible") || endsWith(r2, "ment") )
-      replaceWith(source, "able", ""); // 4 letters
-    else if( endsWith(r2, "ant") || endsWith(r2, "ate") || endsWith(r2, "ent") || endsWith(r2, "ism") || endsWith(r2, "iti") || endsWith(r2, "ive") || endsWith(r2, "ize") || endsWith(r2, "ous"))
-      replaceWith(source, "ant", ""); // 3 letters
-    else if( endsWith(r2, "al") || endsWith(r2, "er") || endsWith(r2, "ic") )
-      replaceWith(source, "al", ""); // 2 letters
-    else if( endsWith(r2, "ion") && (preceder(source, "ion").back()=='s' || preceder(source, "ion").back()=='t') )
-      replaceWith(source, "ion", "");
+      if( endsWith(source, "ement") ) { 
+          if(endsWith(r2, "ement")) 
+              replaceWith(source, "ement", ""); // 5 letters
+          else return;
+      } else if( endsWith(source, "able") || endsWith(source, "ance") || endsWith(source, "ence") || endsWith(source, "ible") || endsWith(source, "ment") ) { 
+          if( endsWith(r2, "able") || endsWith(r2, "ance") || endsWith(r2, "ence") || endsWith(r2, "ible") || endsWith(r2, "ment")  ) 
+              replaceWith(source, "able", ""); // 4 letters
+          else return;
+      } else if( endsWith(source, "ant") || endsWith(source, "ate") || endsWith(source, "ent") || endsWith(source, "ism") || endsWith(source, "iti") || endsWith(source, "ive") || endsWith(source, "ize") || endsWith(source, "ous") ) { 
+          if( endsWith(r2, "ant") || endsWith(r2, "ate") || endsWith(r2, "ent") || endsWith(r2, "ism") || endsWith(r2, "iti") || endsWith(r2, "ive") || endsWith(r2, "ize") || endsWith(r2, "ous")  ) 
+              replaceWith(source, "ant", ""); // 3 letters
+          else return;
+      } else if( endsWith(source, "al") || endsWith(source, "er") || endsWith(source, "ic") ) { 
+          if( endsWith(r2, "al") || endsWith(r2, "er") || endsWith(r2, "ic")  ) 
+              replaceWith(source, "al", ""); // 2 letters
+          else return;
+      } else if( endsWith(source, "ion") ) { 
+          if( endsWith(r2, "ion") && (preceder(source, "ion").back()=='s' || preceder(source, "ion").back()=='t')  ) 
+              replaceWith(source, "ion", "");
+          else return;
+      } 
   }
 }
 
