@@ -18,19 +18,19 @@ class Filter {
 public:
   Filter() {}
   ~Filter() {storage.clear();}
-  inline void init() {storage.clear();}
-  vector<string> filter(const string& source, bool period);
+  inline void init() {storage.clear(); previous="";}
+  inline string prev() const {return previous;}
+  vector<string> filter(const string& source, const string& prev);
   bool add(const string::const_iterator& it, int length);
+  int find(const string& source, const string& r) const;
   int alphaNumeric(const string& source) const;
-  int alphabet(const string& source) const;
-  int numeric(const string& source) const;
   int other(const string& source) const;
   int unknown(const string& source) const;
-  int alphaNumericAt(const string& source) const;
   bool wasEndLine() const;
 
 private:
   vector<string> storage;
+  string previous;
 };
 
 #endif

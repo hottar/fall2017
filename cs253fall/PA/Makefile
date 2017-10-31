@@ -1,36 +1,46 @@
-GCC = g++ -std=c++11 -Wall
-COMPILE = g++ -std=c++11 -Wall -c
-INC = -I.
-DEBUG = -g
-EXEC = PA4
-OBJ = main.cpp Key.h KeyGen.h Organizer.o Reader.h Storage.h SuFFix.o Filter.o
+GCC = g++ -std=c++11
+LDFLAGS = -g -I. -Wall
+EXEC = PA6
+SRCS = Filter.cpp IDF.cpp main.cpp Organizer.cpp SuFFix.cpp TFIDF.cpp
+HEADER = ExceptionKey.h ExceptionLibrary.h Filter.h IDF.h Key.h KeyGen.h Organizer.h Reader.h Storage.h SuFFix.h TFIDF.h
+OBJS = $(subst .cpp,.o,$(SRCS))
 
-all: $(OBJ)
-	$(GCC) $(OBJ) -o $(EXEC) $(DEBUG)
+all: main
 
-stem:
-	./$(EXEC) stem_in.txt
+main: $(OBJS)
+	$(GCC) $(LDFLAGS) -o $(EXEC) $(OBJS)
+
+%.o: %.c
+	$(GCC) -M $(LDFLAGS) -c $<
 
 clean:
-	rm *.o $(EXEC)
+	rm -f $(OBJS) $(EXEC) *.tar
+	
+tar:
+	tar -cvf $(EXEC).tar $(SRCS) $(HEADER) Makefile
 
-Organizer.o: Key.h KeyGen.h Organizer.h Organizer.cpp Reader.h Storage.h SuFFix.h Filter.h
-	$(COMPILE) Key.h KeyGen.h Organizer.h Organizer.cpp Reader.h Storage.h SuFFix.h Filter.h
+TPATH = /s/bach/c/under/hottar/cs253/test-cases/PA5_TestCase
+T6PATH = /s/bach/c/under/hottar/cs253/test-cases
+COMPATH = /s/bach/c/under/hottar/cs253/to-compare
 
-Filter.o: Filter.h Filter.cpp
-	$(COMPILE) Filter.h Filter.cpp
+test1:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(TPATH)/valid_in
 
-key.o: Key.h
-		$(COMPILE) Key.h
+test2:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/valid4.txt
 
-SuFFix.o: SuFFix.h SuFFix.cpp
-	$(COMPILE) SuFFix.h SuFFix.cpp
+compare1:
+	diff -c $(COMPATH)/user_out.txt $(TPATH)/valid_out
+	
+compare2: 
+	diff -c $(COMPATH)/user4_out.txt $(T6PATH)/valid4_out.txt
 
-gen.o: KeyGen.h SuFFix.h Key.h
-	$(COMPILE) KeyGen.h SuFFix.h Key.h
+testa:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/bou.txt $(T6PATH)/pub.txt $(T6PATH)/gjt.txt
 
-store.o: Storage.h Key.h
-	$(COMPILE) Storage.h Key.h
+testb:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/one.txt $(T6PATH)/two.txt $(T6PATH)/three.txt
 
-reader.o: Reader.h
-	$(COMPILE) Reader.h
+testc:
+	./$(EXEC) $(TPATH)/valid_exceptions.txt $(T6PATH)/test1 $(T6PATH)/test2 $(T6PATH)/test3
+
