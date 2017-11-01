@@ -7,14 +7,8 @@ bool SuFFix::endsWith(const string& source, const string& suffix) const {
 }
 
 void SuFFix::replaceWith(string& source, const string& suffix, const string& replace){
-  // if(suffix.size()-replace.size() == 1){
-  //   source.pop_back();
-  // }
-  // else
-  { // inefficient?
     source.erase(source.end()-suffix.size(), source.end());
     source.append(replace);
-  }
 }
 
 bool SuFFix::tryReplaceWith(string& source, const string& suffix, const string& replace){
@@ -52,15 +46,27 @@ string SuFFix::fix(string& source) {
 }
 
 bool SuFFix::isVowel(const string& source) const {
-  if(source.size() != 0){
-    char last = source.back();
-    if(last == 'a' || last == 'i' || last == 'u' || last == 'e' || last == 'o')
-      return true;
-    else if(last == 'y' && source.front()!='y' && !isVowel(preceder(source, "y")) )
-      return true;
-  }
-
-  return false;
+    switch(source.back()) {
+        case 'a':
+        case 'i':
+        case 'u':
+        case 'e':
+        case 'o':
+            return true;
+        case 'y':
+            return (source.front()!='y') ? true : !isVowel(preceder(source, "y"));
+        default:
+            return false;
+    }
+//   if(source.size() != 0){
+//     char last = source.back();
+//     if(last == 'a' || last == 'i' || last == 'u' || last == 'e' || last == 'o')
+//       return true;
+//     else if(last == 'y' && source.front()!='y' && !isVowel(preceder(source, "y")) )
+//       return true;
+//   }
+// 
+//   return false;
 }
 
 bool SuFFix::isDouble(const string& source) const {
@@ -83,7 +89,19 @@ string SuFFix::region1(const string& source) const {
 }
 
 string SuFFix::region2(const string& source) const {
-  return region1(region1(source));
+    int i = 0, n = 0;
+    while ( n < 2 ) {
+        do { // find vowel
+            if( i >= (int) source.size() ) return "";
+            else if( isVowel( string(source.begin(), source.begin()+i) ) ) break;
+            i++;
+        } while (true);
+        if( !isVowel( string(source.begin(), source.begin()+(++i)) ) ) 
+            n++;
+    }
+    return string(source.begin()+i, source.end());
+
+//   return region1(region1(source));
 }
 
 string SuFFix::preceder(const string& source, const string& suffix) const {
@@ -91,11 +109,14 @@ string SuFFix::preceder(const string& source, const string& suffix) const {
 }
 
 bool SuFFix::isShortSyllable(const string& source) const {
-  if(source.length()==2 && !isVowel(source) && isVowel(string(source.begin(), source.end()-1)) ) return true;
-
-  string vowel(source.begin(), source.end()-1), consonant(source.begin(), source.end()-2);
-  if(endsWith(consonant, "w") || endsWith(consonant, "x") || endsWith(consonant, "y")) return false;
-  return !isVowel(source) && isVowel(vowel) && !isVowel(consonant);
+    if( source.length() < 2 || isVowel(source) || !isVowel(string(source.begin(), source.end()-1)) || isVowel(string(source.begin(), source.end()-2)) ) return false;
+    if( endsWith(source, "w") || endsWith(source, "x") || endsWith(source, "y") ) return false;
+    return true;
+//   if(source.length()==2 && !isVowel(source) && isVowel(string(source.begin(), source.end()-1)) ) return true;
+//   else if(source.length() < 3) return false;
+//   string vowel(source.begin(), source.end()-1), consonant(source.begin(), source.end()-2);
+//   if(endsWith(source, "w") || endsWith(source, "x") || endsWith(source, "y")) return false;
+//   return !isVowel(source) && isVowel(vowel) && !isVowel(consonant);
 }
 
 bool SuFFix::isShort(const string& source) const {
@@ -150,7 +171,7 @@ void SuFFix::step3(string& source) {
     }
 }
 
-void SuFFix::step4(string& source) { //TODO fix it
+void SuFFix::step4(string& source) {
   if(endsWith(source, "y") && !isVowel(preceder(source, "y")) && preceder(source, "y").size()>1 ) replaceWith(source, "y", "i");
 }
 
