@@ -1,3 +1,4 @@
+#edited from laptop
 GCC = g++ -std=c++11
 LDFLAGS = -g -I. -Wall
 EXEC = PA6
