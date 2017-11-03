@@ -2,6 +2,15 @@
 
 #include <sstream>
 using std::istringstream;
+using std::stringstream;
+
+#include <iomanip>
+using std::setprecision;
+using std::fixed;
+using std::setw;
+
+#include <iostream>
+using std::right;
 
 using const_it = map<string, Key>::const_iterator;
 
@@ -72,9 +81,9 @@ string Organizer::work(int argc, const char** argv) {
         // read in file to analyse
         readDoc(fname);
         
-        // remove "+" ie. ambiguoug capitalizations
+        // remove "+" ie. ambiguous capitalizations
         unambiguous();
-
+        
         // store file name and the analysed data
         tfidf.store(fname, storage);
         
@@ -84,13 +93,13 @@ string Organizer::work(int argc, const char** argv) {
     // build the similarity
     tfidf.init();
     
-    string s("");
+    stringstream stream;
     for ( auto doc1 : fnames) {
-        for (auto doc2 : fnames) 
-            s += to_string(tfidf.sim(doc1, doc2)) + "\t" ;
-        s += "\n";
+        for (auto doc2 : fnames)
+            stream << right << setw(10) << fixed << setprecision(3) << tfidf.sim(doc1, doc2);
+        stream << "\n";
     }
     
-    return s;
+    return stream.str();
 }
 
