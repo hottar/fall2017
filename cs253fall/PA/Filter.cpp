@@ -21,6 +21,7 @@ vector<string> Filter::filter(const string& source, const string& prev) {
     else length = other( input );
     
     previous = string(it, it+length);
+    if(wasEndLine()) ++sentence;
     it += length;
   }
 
