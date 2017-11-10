@@ -1,17 +1,5 @@
 #include "Organizer.h"
 
-#include <sstream>
-using std::istringstream;
-using std::stringstream;
-
-#include <iomanip>
-using std::setprecision;
-using std::fixed;
-using std::setw;
-
-#include <iostream>
-using std::right;
-
 using const_it = map<string, Key>::const_iterator;
 
 void Organizer::unambiguous() {
@@ -38,8 +26,11 @@ void Organizer::readDoc(const string& fname) {
     string prev = ".";
     
     while(r.hasNext()) {
-        for(auto var : f.filter(r.next(), prev) )
+        for(auto var : f.filter(r.next(), prev) ) {
+            lv.insert(var);
             store(var);
+        }
+        lv.newline(f.endLine());
         prev = f.prev();
     }
 }

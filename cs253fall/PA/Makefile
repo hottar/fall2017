@@ -1,9 +1,9 @@
 GCC = g++ -std=c++11
 LDFLAGS = -g -I. -Wall
 
-EXEC = PA6
-SRCS = Filter.cpp IDF.cpp main.cpp Organizer.cpp SuFFix.cpp TFIDF.cpp
-HEADER = ExceptionKey.h ExceptionLibrary.h Filter.h IDF.h Key.h KeyGen.h Organizer.h Reader.h Storage.h SuFFix.h TFIDF.h
+EXEC = PA7
+SRCS = Filter.cpp IDF.cpp main_t.cpp Organizer.cpp SuFFix.cpp TFIDF.cpp
+HEADER = ExceptionKey.h ExceptionLibrary.h Filter.h IDF.h Key.h KeyGen.h Organizer.h Reader.h Storage.h SuFFix.h TFIDF.h Level.h
 OBJS = $(subst .cpp,.o,$(SRCS))
 
 all: main
@@ -20,8 +20,9 @@ clean:
 tar:
 	tar -cvf $(EXEC).tar $(SRCS) $(HEADER) Makefile
 
-TPATH = /s/bach/c/under/hottar/cs253/test-cases/Test_Cases/valid1
-OPATH = /s/bach/c/under/hottar/cs253/test-cases/Test_Cases/out
+P  = /s/bach/c/under/hottar/cs253/test-cases
+TPATH = $(P)/Test_Cases/valid1
+OPATH = $(P)/Test_Cases/out
 COMPATH = /s/bach/c/under/hottar/cs253/to-compare
 FILE = altona
 FILE1 = beach
@@ -32,8 +33,14 @@ FILE5 = random2
 FILE6 = rock
 FILE7 = seashell
 FILE8 = unique
+FILEA = Alice
+FILEB = teeth
 ALL = $(TPATH)/$(FILE) $(TPATH)/$(FILE1) $(TPATH)/$(FILE2) $(TPATH)/$(FILE3) $(TPATH)/$(FILE4) $(TPATH)/$(FILE5) $(TPATH)/$(FILE6) $(TPATH)/$(FILE7) $(TPATH)/$(FILE8)
 
+testa:
+	./$(EXEC) $(P)/$(FILEA)
+testb:
+	./$(EXEC) $(P)/$(FILEB)
 testall:
 	./$(EXEC) $(TPATH)/Exceptions.txt $(ALL)
 	
